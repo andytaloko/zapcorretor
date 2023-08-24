@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 
-app = Flask(__name__)
+app = Flask(__zapCORRETOR_bot__)
 
 # Temporary in-memory storage for the MVP
 # In a production environment, you'd replace this with a proper database
 users = {}
 
-@app.route('/YOUR_BOT_TOKEN', methods=['POST'])
+@app.route('/6372799289:AAHNFkVjfCBvllvQE7p8U4sdHpSl2wgge2I', methods=['POST'])
 def webhook():
     update = request.get_json()
     chat_id = update['message']['chat']['id']
