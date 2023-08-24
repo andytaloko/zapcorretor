@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-app = Flask(__zapCORRETOR_bot__)
+app = Flask(zapCORRETOR_bot)
 
 # Temporary in-memory storage for the MVP
 # In a production environment, you'd replace this with a proper database
