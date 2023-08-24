@@ -1,6 +1,8 @@
-from flask import Flask, request, jsonify
+import os
 
-app = Flask(zapCORRETOR_bot)
+logging.basicConfig(level=logging.INFO)
+
+app = Flask(__name__)
 
 # Temporary in-memory storage for the MVP
 # In a production environment, you'd replace this with a proper database
