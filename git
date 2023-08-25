@@ -1,3 +1,6 @@
 git init
 git add .
 git commit -m "Initial commit for Telegram bot"
+
+git add app.py
+git commit -m "Added logging import"
