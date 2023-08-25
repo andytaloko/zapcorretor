@@ -1,55 +1,55 @@
-from flask import Flask, request, jsonify
+from telegram import Bot, Update
+from telegram.ext import CommandHandler, CallbackContext, Updater, MessageHandler, Filters
 
-import os
-
+# For logging
 import logging
-
 logging.basicConfig(level=logging.INFO)
 
-app = Flask(__name__)
-
-# Temporary in-memory storage for the MVP
-# In a production environment, you'd replace this with a proper database
+# Replace 'YOUR_TOKEN' with your bot's token
+TOKEN = "6372799289:AAHNFkVjfCBvllvQE7p8U4sdHpSl2wgge2I"
 users = {}
 
-@app.route('/6372799289:AAHNFkVjfCBvllvQE7p8U4sdHpSl2wgge2I', methods=['POST'])
-def webhook():
-    update = request.get_json()
-    chat_id = update['message']['chat']['id']
-    text = update['message']['text']
+def start(update: Update, context: CallbackContext) -> None:
+    chat_id = update.message.chat_id
+    users[chat_id] = {'state': 'ASK_NAME'}
+    update.message.reply_text('Bem-vindo ao zapCORRETOR! Qual é o seu nome?')
 
-    # User starts the bot
-    if text == '/comecar':
-        users[chat_id] = {'state': 'ASK_NAME'}
-        response = "Bem-vindo ao zapCORRETOR! Qual é o seu nome?"
-        
+def handle_message(update: Update, context: CallbackContext) -> None:
+    chat_id = update.message.chat_id
+    text = update.message.text
+
     # Handle different states
-    elif chat_id in users:
+    if chat_id in users:
         if users[chat_id]['state'] == 'ASK_NAME':
             users[chat_id]['name'] = text
             users[chat_id]['state'] = 'ASK_CITY'
-            response = "Obrigado, {}! Em qual cidade ou região você está mais interessado?".format(text)
+            update.message.reply_text(f"Obrigado, {text}! Em qual cidade ou região você está mais interessado?")
             
         elif users[chat_id]['state'] == 'ASK_CITY':
             users[chat_id]['city'] = text
             users[chat_id]['state'] = 'ASK_PROPERTY_TYPE'
-            response = "Perfeito! Você se especializa em que tipo de propriedade? (Residencial, Comercial, etc.)"
+            update.message.reply_text("Perfeito! Você se especializa em que tipo de propriedade? (Residencial, Comercial, etc.)")
             
         elif users[chat_id]['state'] == 'ASK_PROPERTY_TYPE':
             users[chat_id]['property_type'] = text
             users[chat_id]['state'] = 'COMPLETED'
-            response = "Obrigado por fornecer as informações, {}! Agora você pode começar a listar ou buscar propriedades.".format(users[chat_id]['name'])
+            update.message.reply_text(f"Obrigado por fornecer as informações, {users[chat_id]['name']}! Agora você pode começar a listar ou buscar propriedades.")
         else:
-            response = "Como posso ajudar você hoje?"
-
+            update.message.reply_text("Como posso ajudar você hoje?")
     else:
-        response = "Como posso ajudar você hoje?"
-        
-    # Send the response back to the user on Telegram
-    # This is a simplified representation. You'd typically use the Telegram Bot API's sendMessage method.
+        update.message.reply_text("Como posso ajudar você hoje?")
 
-    return jsonify(success=True)
+def main() -> None:
+    updater = Updater(TOKEN)
+
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+
+    # You can set use_context=True to use the new context based callbacks
+    # JobQueue requires context based callbacks
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    main()
