@@ -1,15 +1,11 @@
 from flask import Flask, request, jsonify
-import os
 import requests
-import logging
-
-logging.basicConfig(level=logging.INFO)
+import os
 
 app = Flask(__name__)
 
 TOKEN = "6372799289:AAHNFkVjfCBvllvQE7p8U4sdHpSl2wgge2I"
 TELEGRAM_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
 users = {}
 
 @app.route(f'/{TOKEN}', methods=['POST'])
@@ -18,11 +14,9 @@ def webhook():
     chat_id = update['message']['chat']['id']
     text = update['message']['text']
 
-    # User starts the bot
     if text == '/comecar':
         users[chat_id] = {'state': 'ASK_NAME'}
         response = "Bem-vindo ao zapCORRETOR! Qual é o seu nome?"
-    # Handle different states
     elif chat_id in users:
         if users[chat_id]['state'] == 'ASK_NAME':
             users[chat_id]['name'] = text
@@ -41,9 +35,7 @@ def webhook():
     else:
         response = "Como posso ajudar você hoje?"
         
-    # Send the response back to the user on Telegram
     send_message(chat_id, response)
-
     return jsonify(success=True)
 
 def send_message(chat_id, text):
@@ -51,8 +43,7 @@ def send_message(chat_id, text):
         'chat_id': chat_id,
         'text': text
     }
-    response = requests.post(TELEGRAM_URL, json=payload)
-    return response.json()
+    requests.post(TELEGRAM_URL, data=payload)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
