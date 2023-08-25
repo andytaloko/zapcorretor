@@ -43,7 +43,7 @@ def main() -> None:
     updater = Updater(TOKEN)
 
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("comecar", start))
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
     # You can set use_context=True to use the new context based callbacks
