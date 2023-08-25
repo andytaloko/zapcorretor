@@ -2,7 +2,7 @@ import os
 
 logging.basicConfig(level=logging.INFO)
 
-app = Flask(__zapCORRETOR_bot/zapcorre__)
+app = Flask(__name__)
 
 # Temporary in-memory storage for the MVP
 # In a production environment, you'd replace this with a proper database
