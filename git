@@ -1,2 +1,2 @@
-git add app.py
-git commit -m "Added logging import"
+git add app.py requirements.txt
+git commit -m "Ensured Flask is properly imported"
